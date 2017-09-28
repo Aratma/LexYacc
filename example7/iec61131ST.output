@@ -12,7 +12,11 @@ Grammar
 
     1 program_type_name: tokID
 
-    2 program_declaration: tokProgram program_type_name tokEndProgram
+    2 variable_name: tokID
+
+    3 program_declaration: tokPROGRAM program_type_name assignment_statement tokEND_PROGRAM
+
+    4 assignment_statement: variable_name tokASSGNOP tokInteger ';'
 
 
 Terminals, with rules where they appear
@@ -22,34 +26,41 @@ $end (0) 0
 '+' (43)
 '-' (45)
 '/' (47)
+';' (59) 4
 error (256)
-tokID (258) 1
-tokProgram (259) 2
-tokEndProgram (260) 2
+tokID (258) 1 2
+tokPROGRAM (259) 3
+tokEND_PROGRAM (260) 3
+tokInteger (261) 4
+tokASSGNOP (262) 4
 
 
 Nonterminals, with rules where they appear
 
-$accept (10)
+$accept (13)
     on left: 0
-program_type_name (11)
-    on left: 1, on right: 2
-program_declaration (12)
-    on left: 2, on right: 0
+program_type_name (14)
+    on left: 1, on right: 3
+variable_name (15)
+    on left: 2, on right: 4
+program_declaration (16)
+    on left: 3, on right: 0
+assignment_statement (17)
+    on left: 4, on right: 3
 
 
 State 0
 
     0 $accept: . program_declaration $end
 
-    tokProgram  shift, and go to state 1
+    tokPROGRAM  shift, and go to state 1
 
     program_declaration  go to state 2
 
 
 State 1
 
-    2 program_declaration: tokProgram . program_type_name tokEndProgram
+    3 program_declaration: tokPROGRAM . program_type_name assignment_statement tokEND_PROGRAM
 
     tokID  shift, and go to state 3
 
@@ -72,9 +83,12 @@ State 3
 
 State 4
 
-    2 program_declaration: tokProgram program_type_name . tokEndProgram
+    3 program_declaration: tokPROGRAM program_type_name . assignment_statement tokEND_PROGRAM
 
-    tokEndProgram  shift, and go to state 6
+    tokID  shift, and go to state 6
+
+    variable_name         go to state 7
+    assignment_statement  go to state 8
 
 
 State 5
@@ -86,6 +100,48 @@ State 5
 
 State 6
 
-    2 program_declaration: tokProgram program_type_name tokEndProgram .
+    2 variable_name: tokID .
 
-    $default  reduce using rule 2 (program_declaration)
+    $default  reduce using rule 2 (variable_name)
+
+
+State 7
+
+    4 assignment_statement: variable_name . tokASSGNOP tokInteger ';'
+
+    tokASSGNOP  shift, and go to state 9
+
+
+State 8
+
+    3 program_declaration: tokPROGRAM program_type_name assignment_statement . tokEND_PROGRAM
+
+    tokEND_PROGRAM  shift, and go to state 10
+
+
+State 9
+
+    4 assignment_statement: variable_name tokASSGNOP . tokInteger ';'
+
+    tokInteger  shift, and go to state 11
+
+
+State 10
+
+    3 program_declaration: tokPROGRAM program_type_name assignment_statement tokEND_PROGRAM .
+
+    $default  reduce using rule 3 (program_declaration)
+
+
+State 11
+
+    4 assignment_statement: variable_name tokASSGNOP tokInteger . ';'
+
+    ';'  shift, and go to state 12
+
+
+State 12
+
+    4 assignment_statement: variable_name tokASSGNOP tokInteger ';' .
+
+    $default  reduce using rule 4 (assignment_statement)

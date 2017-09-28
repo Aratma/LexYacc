@@ -46,8 +46,10 @@ extern int yydebug;
   enum yytokentype
   {
     tokID = 258,
-    tokProgram = 259,
-    tokEndProgram = 260
+    tokPROGRAM = 259,
+    tokEND_PROGRAM = 260,
+    tokInteger = 261,
+    tokASSGNOP = 262
   };
 #endif
 
