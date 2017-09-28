@@ -1,0 +1,91 @@
+Terminals unused in grammar
+
+   '-'
+   '+'
+   '*'
+   '/'
+
+
+Grammar
+
+    0 $accept: program_declaration $end
+
+    1 program_type_name: tokID
+
+    2 program_declaration: tokProgram program_type_name tokEndProgram
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'*' (42)
+'+' (43)
+'-' (45)
+'/' (47)
+error (256)
+tokID (258) 1
+tokProgram (259) 2
+tokEndProgram (260) 2
+
+
+Nonterminals, with rules where they appear
+
+$accept (10)
+    on left: 0
+program_type_name (11)
+    on left: 1, on right: 2
+program_declaration (12)
+    on left: 2, on right: 0
+
+
+State 0
+
+    0 $accept: . program_declaration $end
+
+    tokProgram  shift, and go to state 1
+
+    program_declaration  go to state 2
+
+
+State 1
+
+    2 program_declaration: tokProgram . program_type_name tokEndProgram
+
+    tokID  shift, and go to state 3
+
+    program_type_name  go to state 4
+
+
+State 2
+
+    0 $accept: program_declaration . $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    1 program_type_name: tokID .
+
+    $default  reduce using rule 1 (program_type_name)
+
+
+State 4
+
+    2 program_declaration: tokProgram program_type_name . tokEndProgram
+
+    tokEndProgram  shift, and go to state 6
+
+
+State 5
+
+    0 $accept: program_declaration $end .
+
+    $default  accept
+
+
+State 6
+
+    2 program_declaration: tokProgram program_type_name tokEndProgram .
+
+    $default  reduce using rule 2 (program_declaration)
