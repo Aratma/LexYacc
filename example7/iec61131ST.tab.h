@@ -55,7 +55,17 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE YYSTYPE;
+union YYSTYPE
+{
+#line 64 "iec61131ST.y" /* yacc.c:1909  */
+
+   int intval;          /* Integers */
+   char *id;            /* Identifers */
+   struct lbs *lbls;    /* For backpatching */
+
+#line 68 "iec61131ST.tab.h" /* yacc.c:1909  */
+};
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

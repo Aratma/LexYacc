@@ -73,9 +73,55 @@
 
 #define YYDEBUG 1 	
 
-int errors; 		
+int errors;
 
-#line 79 "iec61131ST.tab.c" /* yacc.c:339  */
+
+/*****************************************************/
+/* The following support backpatching */
+struct lbs /* Labels for data, if and while */
+{
+    int for_goto;
+    int for_jmp_false;
+};
+
+struct lbs * newlblrec() /* Allocate space for the labels */
+{
+    return (struct lbs *) malloc(sizeof(struct lbs));
+};
+
+/****************************************************/
+/* Insert identifier and check if defined already  */
+void install ( char *sym_name )
+{
+    symrec *s;
+    s = getsym (sym_name);
+    if (s == 0)
+    s = putsym (sym_name);
+    else
+    {
+        errors++;
+        printf( "%s is already defined\n", sym_name );
+    }
+}
+
+/****************************************************/
+/* If identifier defined, generate code */
+void context_check( enum code_ops operation, char *sym_name )
+{
+    symrec *identifier;
+    identifier = getsym( sym_name );
+    if ( identifier == 0 )
+    {
+        errors++;
+        printf( "%s", sym_name );
+        printf( "%s\n", " is an undeclared identifier" );
+    }
+    else
+        gen_code( operation, identifier->offset );
+}
+
+
+#line 125 "iec61131ST.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -120,7 +166,17 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE YYSTYPE;
+union YYSTYPE
+{
+#line 64 "iec61131ST.y" /* yacc.c:355  */
+
+   int intval;          /* Integers */
+   char *id;            /* Identifers */
+   struct lbs *lbls;    /* For backpatching */
+
+#line 179 "iec61131ST.tab.c" /* yacc.c:355  */
+};
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -134,7 +190,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 138 "iec61131ST.tab.c" /* yacc.c:358  */
+#line 194 "iec61131ST.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -432,7 +488,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    30,    30,    31,    34,    39
+       0,    89,    89,    90,    93,    98
 };
 #endif
 
@@ -1204,7 +1260,7 @@ yyreduce:
   switch (yyn)
     {
       
-#line 1208 "iec61131ST.tab.c" /* yacc.c:1646  */
+#line 1264 "iec61131ST.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1432,7 +1488,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 41 "iec61131ST.y" /* yacc.c:1906  */
+#line 100 "iec61131ST.y" /* yacc.c:1906  */
 
 
 /****************************************************/
